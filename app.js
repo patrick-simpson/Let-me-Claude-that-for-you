@@ -516,6 +516,20 @@
   function applyTheme(modelKey) {
     const cfg = MODELS[modelKey] || MODELS.claude;
     document.body.dataset.theme = modelKey;
+
+    // Lazy-load model-specific fonts (only when that theme is first used)
+    if (modelKey === "chatgpt" && !document.getElementById("font-inter")) {
+      const l = document.createElement("link");
+      l.id = "font-inter"; l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap";
+      document.head.appendChild(l);
+    } else if (modelKey === "gemini" && !document.getElementById("font-roboto")) {
+      const l = document.createElement("link");
+      l.id = "font-roboto"; l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap";
+      document.head.appendChild(l);
+    }
+
     const glyph = $("#brand-glyph");
     if (glyph) { glyph.textContent = cfg.glyph; glyph.className = cfg.glyphClass; }
     const bname = $("#brand-name"); if (bname) bname.textContent = cfg.name;
@@ -523,10 +537,7 @@
     const hero = $("#hero-model-name"); if (hero) hero.textContent = cfg.name;
     const disc = $("#sim-disclaimer"); if (disc) disc.textContent = cfg.disclaimerText;
     const ai = $("#ai-avatar");
-    if (ai) {
-      ai.textContent = cfg.glyph;
-      ai.className = "claude-avatar" + (modelKey === "gemini" ? " gemini-glyph-avatar" : "");
-    }
+    if (ai) { ai.textContent = cfg.glyph; ai.className = "claude-avatar"; }
   }
 
   /* ============================================================
@@ -581,7 +592,7 @@
         html += "<ul>" + lines.map(l => "<li>" + renderInline(l.replace(/^\s*-\s+/,"")) + "</li>").join("") + "</ul>";
       } else if (/^```/.test(block)) {
         const code = esc(block.replace(/^```\w*\n?/,"").replace(/```$/,"").trimEnd());
-        html += `<div class="code-block-wrap"><pre><code>${code}</code></pre><button class="code-copy-btn" onclick="(function(b){var t=b.previousElementSibling.querySelector('code').textContent;navigator.clipboard&&navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy';},1500)}).catch(function(){b.textContent='Copy'});b.textContent='Copying…'})(this)">Copy</button></div>`;
+        html += `<div class="code-block-wrap"><pre><code>${code}</code></pre><button class="code-copy-btn" type="button">Copy</button></div>`;
       } else {
         html += "<p>" + renderInline(block.replace(/\n/g," ")) + "</p>";
       }
@@ -819,16 +830,22 @@
   }
 
   function addOpenedCounter(area) {
-    const n = Math.floor(rand(1, 4));
-    const lines = [
-      `This response has been delivered to ${n} very judged recipient${n>1?"s":""}.`,
-      `You are visitor <strong>#${Math.floor(rand(1000,9999))}</strong> to this specific answer. The look on your face was worth it.`,
-      `This link has been viewed ${n} time${n>1?"s":""}. Concerning.`,
-      `Opened by 1 person. That person is you. This is a closed loop.`,
-    ];
-    const el = document.createElement("p");
+    const n    = Math.floor(rand(1, 4));
+    const v    = Math.floor(rand(1000, 9999));
+    const el   = document.createElement("p");
     el.className = "opened-counter";
-    el.innerHTML = pick(lines);
+    const variant = Math.floor(Math.random() * 4);
+    if (variant === 0) {
+      el.textContent = `This response has been delivered to ${n} very judged recipient${n>1?"s":""}.`;
+    } else if (variant === 1) {
+      const strong = document.createElement("strong");
+      strong.textContent = `#${v}`;
+      el.append("You are visitor ", strong, " to this specific answer. The look on your face was worth it.");
+    } else if (variant === 2) {
+      el.textContent = `This link has been viewed ${n} time${n>1?"s":""}. Concerning.`;
+    } else {
+      el.textContent = "Opened by 1 person. That person is you. This is a closed loop.";
+    }
     area.appendChild(el);
   }
 
@@ -1275,6 +1292,18 @@
      BOOT
      ============================================================ */
   function boot() {
+    // Event delegation for code-copy buttons (CSP-safe; no inline onclick)
+    document.addEventListener("click", e => {
+      if (!e.target.matches(".code-copy-btn")) return;
+      const btn = e.target;
+      const codeEl = btn.previousElementSibling && btn.previousElementSibling.querySelector("code");
+      if (!codeEl || !navigator.clipboard) return;
+      btn.textContent = "Copying…";
+      navigator.clipboard.writeText(codeEl.textContent)
+        .then(() => { btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = "Copy"; }, 1500); })
+        .catch(() => { btn.textContent = "Copy"; });
+    });
+
     setupKonami();
     setupDarkMode();
     setupChangelog();
