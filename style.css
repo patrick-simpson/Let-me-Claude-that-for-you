@@ -1,6 +1,7 @@
 /* ============================================================
    Let Me Claude That For You — styles
-   Warm, minimalist Claude-inspired aesthetic. Vanilla CSS.
+   Multi-theme: Claude (default), ChatGPT, Gemini.
+   Themes applied via [data-theme] on <body>.
    ============================================================ */
 
 :root {
@@ -22,6 +23,48 @@
   --maxw: 720px;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  /* Avatar background defaults to accent; themes can override */
+  --avatar-bg: var(--accent);
+  /* Submit button background; ChatGPT overrides to black */
+  --submit-bg: var(--accent);
+  --submit-hover-bg: var(--accent-hover);
+}
+
+/* ── ChatGPT theme ─────────────────────────────────────────── */
+[data-theme="chatgpt"] {
+  --bg: #FFFFFF;
+  --bg-elevated: #F7F7F8;
+  --text: #0D0D0D;
+  --text-muted: #6E6E80;
+  --text-faint: #9E9EAF;
+  --accent: #10A37F;
+  --accent-hover: #0D9270;
+  --accent-soft: #E6F4F1;
+  --border: #D9D9E3;
+  --border-strong: #ACACBE;
+  --user-bubble: #EFEFEF;
+  /* ChatGPT's submit button is black */
+  --submit-bg: #0D0D0D;
+  --submit-hover-bg: #2A2A2A;
+  --avatar-bg: #0D0D0D;
+}
+
+/* ── Gemini theme ──────────────────────────────────────────── */
+[data-theme="gemini"] {
+  --bg: #F0F4F9;
+  --bg-elevated: #FFFFFF;
+  --text: #1F1F1F;
+  --text-muted: #5F6368;
+  --text-faint: #9AA0A6;
+  --accent: #1A73E8;
+  --accent-hover: #1557B0;
+  --accent-soft: #E8F0FE;
+  --border: #E0E0E0;
+  --border-strong: #DADCE0;
+  --user-bubble: #E8F0FE;
+  --submit-bg: #1A73E8;
+  --submit-hover-bg: #1557B0;
+  --avatar-bg: #1A73E8;
 }
 
 * { box-sizing: border-box; }
@@ -42,6 +85,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: background 0.25s ease, color 0.2s ease;
 }
 
 /* ----------------------------- Header ----------------------------- */
@@ -67,6 +111,10 @@ body {
   color: var(--accent);
   font-size: 1.15rem;
   transform: translateY(1px);
+  transition: color 0.2s ease;
+}
+.brand-glyph.gemini-glyph {
+  color: unset;
 }
 
 .brand-name { font-size: 1.15rem; }
@@ -205,12 +253,12 @@ body {
   height: 38px;
   border: none;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--submit-bg);
   color: #fff;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.12s ease, opacity 0.15s ease;
 }
-.submit-btn:hover { background: var(--accent-hover); }
+.submit-btn:hover { background: var(--submit-hover-bg); }
 .submit-btn:active { transform: scale(0.92); }
 .submit-btn.clicked { animation: press 0.32s ease; }
 
@@ -229,6 +277,65 @@ kbd {
   border-radius: 6px;
   padding: 1px 6px;
   color: var(--text-muted);
+}
+
+/* ------------------------- Model selector ------------------------- */
+.model-selector {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0 0 26px;
+}
+
+.model-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.model-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-color: var(--text-faint);
+}
+.model-btn.active {
+  background: var(--submit-bg);
+  border-color: var(--submit-bg);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.model-btn.active .gemini-glyph {
+  background: none;
+  -webkit-text-fill-color: #fff;
+}
+
+/* Gemini rainbow-star gradient text */
+.gemini-glyph {
+  background: linear-gradient(135deg, #4285F4 0%, #EA4335 35%, #FBBC04 65%, #34A853 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── ChatGPT theme: @keyframes press uses submit color ─────── */
+[data-theme="chatgpt"] .submit-btn.clicked {
+  animation: press-dark 0.32s ease;
+}
+@keyframes press-dark {
+  0% { transform: scale(1); background: #0D0D0D; }
+  40% { transform: scale(0.82); background: #333; }
+  100% { transform: scale(1); background: #0D0D0D; }
 }
 
 /* ------------------------- Creator actions ------------------------ */
@@ -333,7 +440,7 @@ kbd {
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--avatar-bg);
   color: #fff;
   display: grid;
   place-items: center;

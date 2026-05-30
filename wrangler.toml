@@ -1,0 +1,8 @@
+name            = "lmctfy-proxy"
+main            = "worker.js"
+compatibility_date = "2024-11-01"
+
+# After deploying, add your API key:
+#   wrangler secret put ANTHROPIC_API_KEY
+#
+# Then paste the *.workers.dev URL into WORKER_URL in app.js.
