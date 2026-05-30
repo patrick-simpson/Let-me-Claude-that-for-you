@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Let Me Claude That For You</title>
+  <meta name="description" content="The passive-aggressive way to answer a question someone could have asked an AI themselves. A parody of Claude 6.7 Opus." />
+  <meta name="color-scheme" content="light" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-glyph" aria-hidden="true">✦</span>
+      <span class="brand-name">Claude</span>
+      <span class="brand-model">6.7 Opus</span>
+    </div>
+    <a class="header-link" id="new-chat-link" href="./" title="Start a new chat">New chat</a>
+  </header>
+
+  <main class="stage">
+    <!-- ============ CREATOR VIEW (default) ============ -->
+    <section id="creator-view" class="view" aria-label="Create a shareable link">
+      <div class="hero">
+        <h1 class="hero-title">Let me <span class="accent">Claude</span> that for you</h1>
+        <p class="hero-sub">
+          For when someone asks you a question they could&rsquo;ve just asked an AI.
+          Type their question, grab the link, and let Claude 6.7 Opus do the gentle
+          condescension for you.
+        </p>
+      </div>
+
+      <form id="creator-form" class="composer-wrap" autocomplete="off">
+        <div class="composer">
+          <button type="button" class="icon-btn paperclip" tabindex="-1" aria-label="Attach file (decorative)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
+          <textarea
+            id="creator-input"
+            class="composer-input"
+            rows="1"
+            placeholder="How do I center a div?"
+            aria-label="Type the question you want to answer"
+          ></textarea>
+          <button type="submit" id="creator-submit" class="submit-btn" aria-label="Generate shareable link">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+          </button>
+        </div>
+        <p class="composer-hint">Press <kbd>Enter</kbd> to generate &amp; copy the link.</p>
+      </form>
+
+      <div class="creator-actions">
+        <button type="button" id="generate-btn" class="primary-btn">Generate &amp; Copy Link</button>
+        <button type="button" id="preview-btn" class="ghost-btn">Preview the result</button>
+      </div>
+
+      <div class="link-output" id="link-output" hidden>
+        <code id="link-text" class="link-text"></code>
+        <button type="button" id="copy-again-btn" class="ghost-btn small">Copy</button>
+      </div>
+    </section>
+
+    <!-- ============ SIMULATION VIEW (?q= present) ============ -->
+    <section id="sim-view" class="view" aria-label="Claude simulation" hidden>
+      <div id="response-area" class="response-area" aria-live="polite"></div>
+
+      <div class="composer-wrap sim-composer-wrap">
+        <div class="composer is-readonly">
+          <button type="button" class="icon-btn paperclip" tabindex="-1" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
+          <div id="sim-input" class="composer-input sim-input" aria-label="Claude prompt"></div>
+          <button type="button" id="sim-submit" class="submit-btn" aria-label="Submit" tabindex="-1">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+          </button>
+        </div>
+        <p class="composer-hint sim-disclaimer">Claude 6.7 Opus can make mistakes about how much it respects you. Please double-check responses.</p>
+      </div>
+
+      <div class="sim-actions" id="sim-actions" hidden>
+        <a class="primary-btn" href="./">Make your own &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      A parody &mdash; not affiliated with, endorsed by, or representative of Anthropic.
+      &ldquo;Claude 6.7 Opus&rdquo; is a joke. The snark is free.
+    </p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>Link copied to clipboard</div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
